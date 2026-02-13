@@ -12,7 +12,16 @@ const rememberCheckbox = document.getElementById('remember');
 togglePasswordBtn.addEventListener('click', () => {
     const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
     passwordInput.setAttribute('type', type);
-    togglePasswordBtn.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
+    const eyeIcon = togglePasswordBtn.querySelector('.eye-icon');
+    const eyeOffIcon = togglePasswordBtn.querySelector('.eye-off-icon');
+    
+    if (type === 'password') {
+        eyeIcon.style.display = 'block';
+        eyeOffIcon.style.display = 'none';
+    } else {
+        eyeIcon.style.display = 'none';
+        eyeOffIcon.style.display = 'block';
+    }
 });
 
 // Email validation
@@ -71,8 +80,21 @@ loginForm.addEventListener('submit', (e) => {
     if (isValid) {
         // Simulate login process
         const loginBtn = loginForm.querySelector('.login-btn');
+        const btnText = loginBtn.querySelector('.btn-text');
         loginBtn.disabled = true;
-        loginBtn.textContent = 'Logging in...';
+        btnText.textContent = 'Signing in';
+        
+        // Add loading animation
+        const btnIcon = loginBtn.querySelector('.btn-icon');
+        btnIcon.style.animation = 'spin 1s linear infinite';
+        
+        // Create spinner animation if not exists
+        if (!document.querySelector('style[data-spinner]')) {
+            const style = document.createElement('style');
+            style.setAttribute('data-spinner', 'true');
+            style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+            document.head.appendChild(style);
+        }
         
         // Simulate API call delay
         setTimeout(() => {
@@ -82,7 +104,6 @@ loginForm.addEventListener('submit', (e) => {
             // Store credentials if "Remember me" is checked
             if (rememberCheckbox.checked) {
                 localStorage.setItem('rememberedEmail', email);
-                console.log('Email remembered');
             } else {
                 localStorage.removeItem('rememberedEmail');
             }
@@ -90,7 +111,8 @@ loginForm.addEventListener('submit', (e) => {
             // Reset form
             loginForm.reset();
             loginBtn.disabled = false;
-            loginBtn.textContent = 'Login';
+            btnText.textContent = 'Sign in';
+            btnIcon.style.animation = 'none';
             
             // Hide success message after 3 seconds
             setTimeout(() => {
